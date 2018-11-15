@@ -1,0 +1,5 @@
+1. 该脚本用于对基因型文件bfile（plink）指定区域做LD heatmap。
+2. LDheatmap_plink.R需要装载"grid", "LDheatmap", "genetics"三个packages，提前安装好。
+3. 提前准备好bfiles（bim, bed, fam），list_rb为参与分析的品种名，"--chr chr1 --from-mb 22.2 --to-mb 22.4"指定作图区域。
+4. 不要保存为位图格式（文件太大难以加载），若作图区域很大需使用内存更大的胖节点。
+5. 261_2016.result（head -n 1000）和prune_rb.pvalue两个文件一般情况下不需要。

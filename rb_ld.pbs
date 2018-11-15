@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -N ld_rb
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=480:00:00
+#PBS -e errlog_ld_rb
+
+cd $PBS_O_WORKDIR
+
+plink -bfile 523 --make-bed --chr chr1 --from-mb 22.2 --to-mb 22.4 --out rb --keep list_rb
+plink -bfile rb --r2 square --out rb
+plink -bfile rb --indep-pairwise 10kb 10 0.8 --out rb_prune
+
+for i in `cat rb_prune.prune.in`
+do
+grep "${i}" 261_2016.result >> prune_rb.pvalue
+done
+
+cut -f 2 rb.bim > rb.tmp
+perl -pi -e 's/\n/\t/g' rb.tmp
+perl -pi -e 's/\t$/\n/g' rb.tmp
+cat rb.tmp rb.ld > rb.tmp2
+mv rb.tmp2 rb.ld
+cut -f 4 rb.bim > rb.tmp
+perl -pi -e 's/\n/\t/g' rb.tmp
+perl -pi -e 's/\t$//g' rb.tmp
+mv rb.tmp rb.dist
+Rscript LDheatmap_plink.R rb.ld rb.dist
+
+rm ld_rb.o*
+rm rb.*
+rm rb_prune.*
+rm errlog_ld_rb
